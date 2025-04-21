@@ -1,0 +1,17 @@
+[project]
+name = "custom-siri"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "datasets>=3.5.0",
+    "huggingface-hub>=0.30.2",
+    "psutil>=7.0.0",
+    "pyaudio>=0.2.14",
+    "pydantic-settings>=2.9.1",
+    "pyttsx3>=2.98",
+    "speechrecognition>=3.14.2",
+    "torch>=2.6.0",
+    "transformers>=4.51.3",
+]
