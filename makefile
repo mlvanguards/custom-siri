@@ -5,7 +5,12 @@ UNKNOWN_INTENT_EXAMPLES ?= 1
 PARAPHRASE_COUNT ?= 1
 DATASET_NAME ?= dataset.json
 
-.PHONY: help dataset
+# Default values for dataset upload
+DATASET_PATH ?= data/siri_xlam_dataset_v2.json
+HF_REPO_ID ?= valex95/siri-function-calling-v4
+LOCAL_PATH ?= siri_function_calling_dataset
+
+.PHONY: help dataset upload
 
 help:
 	@echo "Available make targets:"
@@ -18,3 +23,9 @@ dataset: ## Generate a dataset using configured environment variables
 		--unknown-intent-examples $(UNKNOWN_INTENT_EXAMPLES) \
 		--paraphrase-count $(PARAPHRASE_COUNT) \
 		--dataset-name $(DATASET_NAME)
+
+upload: ## Upload dataset to Hugging Face Hub
+	PYTHONPATH=. python src/dataset/upload_hf_dataset.py \
+		--dataset-path $(DATASET_PATH) \
+		--repo-id $(HF_REPO_ID) \
+		--local-path $(LOCAL_PATH)
