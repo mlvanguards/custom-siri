@@ -16,7 +16,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # File path
-DATASET_PATH = "data/siri_xlam_dataset_v2.json"
+DATASET_PATH = "data/siri_xlam_dataset_v3.json"
+HF_DATASET_REPO = "valex95/siri-function-calling-v3"
 
 # Load your JSON file
 logger.info(f"Loading dataset from {DATASET_PATH}")
@@ -55,7 +56,6 @@ try:
     logger.info("Logging into Hugging Face Hub...")
     login(token=settings.HF_AUTH_TOKEN)
 
-    HF_DATASET_REPO = "valex95/siri-function-calling-v2"
     logger.info(f"Pushing dataset to Hugging Face: {HF_DATASET_REPO}")
     dataset.push_to_hub(HF_DATASET_REPO)
 
