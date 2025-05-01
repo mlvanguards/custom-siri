@@ -45,7 +45,9 @@ def build_dataset(
 
     # Generate multi-tool examples
     logging.info("Generating multi-tool examples...")
-    multi_tool, idx = generate_multi_tool_examples(multi_tool_examples, idx)
+    multi_tool, idx = generate_multi_tool_examples(
+        multi_tool_examples, idx, use_hf_examples=True, num_examples=200
+    )
     dataset.extend(multi_tool)
     logging.info(f"Generated {len(multi_tool)} multi-tool examples.")
 
@@ -59,7 +61,7 @@ def build_dataset(
 
     # Paraphrase
     if paraphrase_count > 0:
-        paraphrased = paraphrase_dataset(dataset, 100000, paraphrase_count)
+        paraphrased = paraphrase_dataset(dataset, 1000, paraphrase_count)
         full_dataset = dataset + paraphrased
         logging.info(f"Added {len(paraphrased)} paraphrased examples.")
     else:
@@ -107,7 +109,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--paraphrase-count",
         type=int,
-        default=100,
+        default=10,
         help="Number of paraphrased examples",
     )
     parser.add_argument(

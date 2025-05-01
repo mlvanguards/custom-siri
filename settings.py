@@ -25,7 +25,7 @@ class AuthSettings(BaseAppSettings):
 class DatasetSettings(BaseAppSettings):
     """OpenAI API settings."""
 
-    GPT_MODEL: str = "gpt-4o"
+    LLM_MODEL: str = "claude-3-5-sonnet-20240620"
     SINGLE_TOOL_EXAMPLES_PER_TOOL: int = 2
     MULTI_TOOL_EXAMPLES: int = 2
     UNKNOWN_INTENT_EXAMPLES: int = 2
