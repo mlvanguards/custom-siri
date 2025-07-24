@@ -1,7 +1,7 @@
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 # Set environment variables
-ENV WORKSPACE_ROOT=custom-siri \
+ENV WORKSPACE_ROOT=/opt/custom-siri \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 

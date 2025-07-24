@@ -141,6 +141,7 @@ custom-siri/
 │   ├── dataset/               # Dataset generation tools
 │   └── models/               # Trained model files
 ├── experiments/              # Experiment scripts
+├── Dockerfile                # For using docker containers
 ├── notebook/                # Training notebooks
 ├── app.py                   # Main Streamlit application
 ├── functions.py             # Core function library
@@ -179,7 +180,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-** All courses, along with the generated date and fine-tuned model locations.**
+**All courses, along with the generated date and fine-tuned model locations.**
 * [Part 1: Build your own Siri. Locally. On-Device. No Cloud.](https://thehyperplane.substack.com/p/data-preparation-for-function-tooling)  
 * [Part 2: Data Preparation for Function Tooling is boring ](https://thehyperplane.substack.com/p/data-preparation-for-function-tooling)
 * [Part 3: Fine tuning is boring](https://thehyperplane.substack.com/p/data-preparation-for-function-tooling)
