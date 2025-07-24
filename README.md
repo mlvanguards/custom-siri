@@ -105,8 +105,8 @@ The application will be available at `http://localhost:8501`
 Build and run using Docker:
 
 ```bash
-docker build -t custom-siri.
-docker run -p 8501:8501 --rm fraud-audio-detection\
+docker build -t custom-siri .
+docker run -p 8501:8501 --rm custom-siri \
 ```
 
 ### Example Commands

@@ -16,6 +16,8 @@ RUN apt-get update -y \
 
 WORKDIR $WORKSPACE_ROOT
 
+RUN apt-get update && apt-get install -y portaudio19-dev
+
 # Install the project's dependencies using the lockfile and settings
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
@@ -25,6 +27,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Installing separately from its dependencies allows optimal layer caching
 ADD . ${WORKSPACE_ROOT}
 
-ENV PATH="${WORKSPACE_ROOT}/.venv/Scripts:$PATH"
+ENV PATH="${WORKSPACE_ROOT}/.venv/bin:$PATH"
 
 CMD ["streamlit", "run", "src/streamlit_siri_demo/app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.runOnSave=True"]
