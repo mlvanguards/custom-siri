@@ -3,7 +3,7 @@ name = "custom-siri"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "datasets>=3.5.0",
     "huggingface-hub>=0.30.2",
@@ -14,16 +14,7 @@ dependencies = [
     "pyttsx3>=2.98",
     "sentence-transformers>=4.1.0",
     "speechrecognition>=3.14.2",
-    "torch>=2.7.1",
+    "torch>=2.6.0",
     "transformers>=4.51.3",
-    "streamlit>=1.45.1",
-    "faster-whisper",
-    "sounddevice",
-    "python-dotenv",
-    "wandb",
-    "unsloth",
-    "scipy",
-    "pycaw",
-    "comtypes",
-    "llama_cpp_python"
+    "litellm",
 ]

@@ -1,6 +1,13 @@
 import json
 
 from datasets import load_dataset
+from huggingface_hub import login
+
+# Import settings to get the token
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from settings import settings
 
 
 def render_template(template, args):
@@ -20,6 +27,10 @@ def extract_datapoints_hf_dataset(
 
     str_data = []
 
+    # Authenticate with Hugging Face if token is available
+    if settings.auth.HUGGINGFACE_TOKEN:
+        login(token=settings.auth.HUGGINGFACE_TOKEN)
+    
     datasets = load_dataset(dataset)
 
     shuffled = datasets["train"].shuffle(seed=42)

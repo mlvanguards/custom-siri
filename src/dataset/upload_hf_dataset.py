@@ -20,13 +20,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dataset-path",
         type=str,
-        default="data/siri_xlam_dataset_v3.json",
+        default="data/dataset_v1.json",
         help="Path to the JSON dataset file",
     )
     parser.add_argument(
         "--repo-id",
         type=str,
-        default="valex95/siri-function-calling-v3",
+        default="CosminMihai02/siri-function-calling-v1",
         help="Hugging Face repository ID",
     )
     parser.add_argument(

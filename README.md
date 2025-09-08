@@ -1,6 +1,8 @@
 # Build your own Siri
 
-A complete pipeline for building your own Siri-like voice assistant that runs entirely locally. This project includes dataset generation, model fine-tuning, and a real-time inference system with both voice and text input capabilities. This project is the implementation of the solution described in the [4 part course: Build your own Siri, by Hyperplane](https://thehyperplane.substack.com/p/build-your-own-siri-locally-on-device).
+![Build your own Siri](images/BYOS.webp)
+
+A complete pipeline for building your own Siri-like voice assistant that runs entirely locally. This project includes dataset generation, model fine-tuning, and a real-time inference system with both voice and text input capabilities. This project is the implementation of the solution described in the [4+1 part course: Build your own Siri, by Hyperplane](https://thehyperplane.substack.com/p/build-your-own-siri-locally-on-device).
 
 ![Build your own Siri workflow](images/build_siri.webp)
 
@@ -10,6 +12,7 @@ A complete pipeline for building your own Siri-like voice assistant that runs en
 * [Prerequisites](#prerequisites)
 * [Installation](#installation)
 * [Usage](#usage)
+* [Dataset Generation](#dataset-generation)
 * [Available Functions](#available-functions)
 * [Project Structure](#project-structure)
 * [Development](#development)
@@ -117,6 +120,158 @@ docker run -p 8501:8501 --rm custom-siri \
 * *"Open Chrome and show me the battery status"*
 * *"Lock the screen and pause the music"*
 
+## Dataset Generation
+
+This project includes a comprehensive dataset generation pipeline that creates high-quality function-calling examples for training the Siri assistant. The pipeline generates diverse conversational examples across multiple categories.
+
+### Prerequisites
+
+Before generating datasets, ensure you have:
+
+1. **Ollama installed and running**: The generation process uses Ollama for LLM inference
+   ```bash
+   # Install Ollama (visit https://ollama.ai for platform-specific instructions)
+   ollama serve
+   ollama pull llama3.1:8b  # or your preferred model
+   ```
+
+2. **Environment Configuration**: Set up your environment variables in `.env` (optional):
+   ```bash
+   # Optional: For Hugging Face dataset uploads
+   HUGGINGFACE_TOKEN=your_token_here
+   
+   # Optional: For OpenAI API (if using OpenAI models)
+   OPENAI_API_KEY=your_key_here
+   ```
+
+3. **Model Configuration**: Edit `settings.py` to configure your preferred model:
+   ```python
+   # Available models in DatasetSettings:
+   LLM_MODEL = "ollama/llama3.1:8b"      # Default (recommended)
+   # LLM_MODEL = "ollama/gemma2:9b"       # Alternative
+   # LLM_MODEL = "ollama/llama3.2:3b"     # Smaller/faster
+   # LLM_MODEL = "ollama/qwen2.5:7b"      # Alternative
+   ```
+
+### Dataset Generation Process
+
+The pipeline generates four types of examples:
+
+1. **Single Tool Examples**: Individual function calls with natural language queries
+2. **Multi-Tool Examples**: Complex scenarios requiring multiple function calls
+3. **Unknown Intent Examples**: Queries that cannot be fulfilled by available functions
+4. **Adversarial Examples**: Edge cases and challenging scenarios
+5. **Paraphrased Examples**: Variations of existing examples for data augmentation
+
+### Usage
+
+#### Basic Dataset Generation
+
+Generate a dataset with default parameters (recommended for testing):
+
+```bash
+cd src/dataset
+python create_dataset.py
+```
+
+This will create `data/dataset.json` with:
+- 2 examples per tool for single-tool scenarios
+- 2 multi-tool examples
+- 2 unknown intent examples
+- 2 paraphrased examples
+
+#### Custom Dataset Generation
+
+For production datasets, customize the generation parameters:
+
+```bash
+python create_dataset.py \
+  --single-tool-examples 50 \
+  --multi-tool-examples 100 \
+  --unknown-intent-examples 30 \
+  --adversarial-examples 20 \
+  --paraphrase-count 200 \
+  --dataset-name "dataset_v2.json"
+```
+
+#### Parameters
+
+- `--single-tool-examples`: Number of examples per individual tool (default: 50)
+- `--multi-tool-examples`: Number of multi-function scenarios (default: 50)
+- `--unknown-intent-examples`: Number of unsupported query examples (default: 30)
+- `--adversarial-examples`: Number of edge case examples (default: 5)
+- `--paraphrase-count`: Number of paraphrased variations (default: 10)
+- `--dataset-name`: Output filename (default: "dataset.json")
+
+### Dataset Validation
+
+Validate your generated dataset for quality and format compliance:
+
+```bash
+python validate_dataset.py data/dataset.json
+```
+
+This will:
+- ✅ Check format compliance (ShareGPT format)
+- 🔄 Remove duplicates and contamination
+- 🧪 Test function execution (first 10 examples)
+- 💾 Save cleaned dataset as `*_cleaned.json`
+
+### Available Tools
+
+The dataset generation includes examples for these function categories:
+
+- **System Control**: `lock_screen`, `get_battery_status`, `set_volume`
+- **Web Search**: `search_google`
+- **Productivity**: `create_note`
+
+Add new tools by editing `src/dataset/tools_description.py`.
+
+### Dataset Upload (Optional)
+
+Upload your dataset to Hugging Face Hub for sharing:
+
+```bash
+python upload_hf_dataset.py \
+  --dataset-path data/dataset_cleaned.json \
+  --repo-id "your-username/your-dataset-name"
+```
+
+### Dataset Structure
+
+Generated datasets follow the ShareGPT format:
+
+```json
+[
+  {
+    "id": 1,
+    "query": "Activate screen lock",
+    "answers": [
+      {
+        "name": "lock_screen",
+        "arguments": {}
+      }
+    ],
+    "tools": [
+      {
+        "name": "lock_screen",
+        "description": "Locks the laptop screen.",
+        "parameters": {}
+      }
+    ]
+  }
+]
+```
+
+### Troubleshooting
+
+**Common Issues:**
+
+1. **Ollama Connection Error**: Ensure Ollama is running on `http://localhost:11434`
+2. **Model Not Found**: Pull the required model with `ollama pull llama3.1:8b`
+3. **Low Quality Output**: Try using a larger model like `llama3.1:8b` instead of smaller variants
+4. **Memory Issues**: Reduce batch sizes in `settings.py` or use a smaller model
+
 ## Available Functions
 
 ### File Operations
@@ -143,8 +298,6 @@ custom-siri/
 ├── experiments/              # Experiment scripts
 ├── Dockerfile                # For using docker containers
 ├── notebook/                # Training notebooks
-├── app.py                   # Main Streamlit application
-├── functions.py             # Core function library
 ├── pyproject.toml          # Project configuration
 └── README.md
 ```
@@ -183,7 +336,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **All courses, along with the generated date and fine-tuned model locations.**
 * [Part 1: Build your own Siri. Locally. On-Device. No Cloud.](https://thehyperplane.substack.com/p/data-preparation-for-function-tooling)  
 * [Part 2: Data Preparation for Function Tooling is boring ](https://thehyperplane.substack.com/p/data-preparation-for-function-tooling)
-* [Part 3: Fine tuning is boring](https://thehyperplane.substack.com/p/data-preparation-for-function-tooling)
-* [Part 4: Siri on Edge](https://thehyperplane.substack.com/p/build-your-own-siri-locally-on-device)
+* [Part 3: Fine tune your own Siri](https://thehyperplane.substack.com/p/fine-tune-your-own-siri?r=5l0jbv)
+* [Part 4: Deploy your Siri clone offline, on your phone](https://thehyperplane.substack.com/p/build-your-own-siri-locally-on-device)
+* [Part 5: Bonus course](https://thehyperplane.substack.com/p/build-your-own-siri-locally-on-device)
 * [Custom Datasets](https://huggingface.co/datasets/valex95/)
 * [Fine-tuned Models](https://huggingface.co/CosminMihai02/)

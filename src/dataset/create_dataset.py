@@ -3,17 +3,20 @@ import json
 import logging
 from pathlib import Path
 
-from src.dataset.generation.generate_multi_tool_points import (
+from generation.generate_multi_tool_points import (
     generate_multi_tool_examples,
 )
-from src.dataset.generation.generate_negative_points import (
+from generation.generate_negative_points import (
     generate_unknown_intent_examples,
 )
-from src.dataset.generation.generate_single_tool_points import (
+from generation.generate_single_tool_points import (
     generate_single_tool_examples,
 )
-from src.dataset.generation.paraphrase import paraphrase_dataset
-from src.dataset.tools_description import TOOLS
+from generation.generate_adversial_examples import (
+    generate_adversarial_examples,
+)
+from generation.paraphrase import paraphrase_dataset
+from tools_description import TOOLS
 
 # Configure logging
 logging.basicConfig(
@@ -25,6 +28,7 @@ def build_dataset(
     single_tool_examples_per_tool=50,
     multi_tool_examples=50,
     unknown_intent_examples=30,
+    adversarial_examples=10,
     paraphrase_count=100,
     dataset_name: str = "dataset.json",
 ):
@@ -46,7 +50,7 @@ def build_dataset(
     # Generate multi-tool examples
     logging.info("Generating multi-tool examples...")
     multi_tool, idx = generate_multi_tool_examples(
-        multi_tool_examples, idx, use_hf_examples=True, num_examples=200
+        multi_tool_examples, idx, use_hf_examples=True, num_examples=8
     )
     dataset.extend(multi_tool)
     logging.info(f"Generated {len(multi_tool)} multi-tool examples.")
@@ -56,6 +60,12 @@ def build_dataset(
     unknowns, idx = generate_unknown_intent_examples(unknown_intent_examples, idx)
     dataset.extend(unknowns)
     logging.info(f"Generated {len(unknowns)} unknown intent examples.")
+
+    # Generate adversarial examples
+    logging.info("Generating adversarial examples...")
+    adversarials, idx = generate_adversarial_examples(TOOLS, adversarial_examples, idx)
+    dataset.extend(adversarials)
+    logging.info(f"Generated {len(adversarials)} adversarial examples.")
 
     logging.info(f"Generated base dataset with {len(dataset)} examples.")
 
@@ -107,6 +117,12 @@ if __name__ == "__main__":
         help="Number of unknown intent examples",
     )
     parser.add_argument(
+        "--adversarial-examples",
+        type=int,
+        default=5,
+        help="Number of adversarial examples",
+    )
+    parser.add_argument(
         "--paraphrase-count",
         type=int,
         default=10,
@@ -125,6 +141,7 @@ if __name__ == "__main__":
         single_tool_examples_per_tool=args.single_tool_examples,
         multi_tool_examples=args.multi_tool_examples,
         unknown_intent_examples=args.unknown_intent_examples,
+        adversarial_examples=args.adversarial_examples,
         paraphrase_count=args.paraphrase_count,
         dataset_name=args.dataset_name,
     )
