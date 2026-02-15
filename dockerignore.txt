@@ -1,0 +1,30 @@
+# Compiled Python bytecode
+**/__pycache__/
+**/*.pyc
+
+# VCS
+.git
+.gitignore
+
+# C extensions
+*.so
+
+# CI
+.gitlab-ci.yml
+
+# Local development
+.env
+.venv
+env/
+venv/
+
+# Docker
+.dockerignore
+.docker
+docker-compose.yml
+
+*~
+*.md
+*.bak
+*.log
+*.example

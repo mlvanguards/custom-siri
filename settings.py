@@ -23,9 +23,19 @@ class AuthSettings(BaseAppSettings):
 
 
 class DatasetSettings(BaseAppSettings):
-    """OpenAI API settings."""
+    """LLM settings for dataset generation."""
 
-    LLM_MODEL: str = "claude-3-5-sonnet-20240620"
+    # Ollama configuration  
+    LLM_MODEL: str = "ollama/llama3.1:8b"  # Use Ollama with Llama 3.1 8B (smarter, good with 16GB RAM)
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    
+    # Alternative models you can use:
+    # "ollama/llama3.1:8b" - Llama 3.1 8B
+    # "ollama/gemma2:9b" - Gemma 2 9B  
+    # "ollama/llama3.2:3b" - Llama 3.2 3B (smaller, faster)
+    # "ollama/qwen2.5:7b" - Qwen 2.5 7B
+    
+    # Dataset generation parameters
     SINGLE_TOOL_EXAMPLES_PER_TOOL: int = 2
     MULTI_TOOL_EXAMPLES: int = 2
     UNKNOWN_INTENT_EXAMPLES: int = 2

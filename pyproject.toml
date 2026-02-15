@@ -16,4 +16,5 @@ dependencies = [
     "speechrecognition>=3.14.2",
     "torch>=2.6.0",
     "transformers>=4.51.3",
+    "litellm",
 ]

@@ -1,6 +1,14 @@
 import logging
+import sys
+from pathlib import Path
+
+# Add project root to Python path to find settings module
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 from litellm import completion
+import litellm
+
 
 from settings import settings
 from src.dataset.prompts import create_paraphrase_prompt
@@ -14,9 +22,15 @@ def paraphrase_query(query):
     logging.info(f"Sending paraphrasing request for query: {query!r}")
     prompt = create_paraphrase_prompt(query)
     try:
+        # Configure litellm for Ollama
+        if settings.dataset.LLM_MODEL.startswith("ollama/"):
+            litellm.api_base = settings.dataset.OLLAMA_BASE_URL
+        
         response = completion(
             model=settings.dataset.LLM_MODEL,
             messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,  # Lower temperature for faster, more focused responses
+            max_tokens=100,   # Reduced tokens for faster generation
         )
         logging.debug(f"Received response: {response}")
         paraphrased_text = (
